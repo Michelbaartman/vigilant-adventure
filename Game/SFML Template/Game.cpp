@@ -19,10 +19,7 @@ void Game::events() {
 		if (event.type == sf::Event::MouseMoved) mouseMode = true;
 		if (event.type == sf::Event::KeyPressed) mouseMode = false;
 		if (event.type == sf::Event::MouseButtonReleased) {
-			clearSel();
-			selected = grid[mousePos.x][mousePos.y][0];
-			hud.setText2(selected.getName());
-			grid[mousePos.x][mousePos.y][1].setSelect(true);
+			select(mousePos);
 		}
 	}
 
@@ -100,7 +97,7 @@ void Game::update() {
 }
 
 void Game::draw() {
-	window.clear(sf::Color(96, 50, 75));
+	window.clear(sf::Color(79, 51, 68));
 
 	// draw objects/graphics
 	drawGrid();
@@ -112,12 +109,13 @@ void Game::setupGrid(int width, int height) {
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {
 			grid[x][y][1] = *new Tile(0, x * sprReso, y * sprReso);
-			if (rand() % 2) grid[x][y][2] = *new Tile(-1, x * sprReso, y * sprReso);
+			grid[x][y][2] = *new Tile(-2, x * sprReso, y * sprReso);
+			if (rand() % 2) grid[x][y][3] = *new Tile(-1, x * sprReso, y * sprReso);
 		}
 	}
 
-	grid[5][6][0] = *new Tile(1, 5 * sprReso, 6 * sprReso);
-	grid[6][6][0] = *new Tile(2, 6 * sprReso, 6 * sprReso);
+	units[3][3] = *new Unit(3, 3, "sprites/U_Brother.png", 5);
+	units[4][4] = *new Unit(4, 4, "sprites/U_Sister.png", 3);
 }
 
 void Game::drawGrid() {
@@ -129,8 +127,19 @@ void Game::drawGrid() {
 
 	for (int x = 0; x < tempGridX; x++) {
 		for (int y = 0; y < tempGridY; y++) {
+			grid[x][y][3].draw(window); // tile properties
+		}
+	}
+
+	for (int x = 0; x < tempGridX; x++) {
+		for (int y = 0; y < tempGridY; y++) {
 			grid[x][y][1].draw(window); // grid indicator
-			grid[x][y][0].draw(window); // units
+		}
+	}
+
+	for (int x = 0; x < tempGridX; x++) {
+		for (int y = 0; y < tempGridY; y++) {
+			units[x][y].draw(window); // units
 		}
 	}
 }
@@ -150,4 +159,36 @@ void Game::clearSel() {
 			grid[x][y][1].setSelect(false); // grid indicator
 		}
 	}
+}
+
+void Game::select(sf::Vector2i mousePos) {
+	clearSel();
+	if (somethingSelected) {
+		if (!units[mousePos.x][mousePos.y].isUnit()) {
+			units[mousePos.x][mousePos.y] = units[selected.x][selected.y];
+			units[mousePos.x][mousePos.y].move(mousePos.x, mousePos.y);
+			units[selected.x][selected.y] = Unit();
+		}
+		hud.setText2("deselect");
+		somethingSelected = false;
+	} else {
+		selected = mousePos;
+		std::cout << mousePos.x << "|" << mousePos.y << "\n";
+		hud.setText2(units[selected.x][selected.y].getName());
+		grid[selected.x][selected.y][1].setSelect(true);
+		if (units[selected.x][selected.y].isUnit()) {
+			somethingSelected = true;
+		}
+	}
+	std::cout << units[selected.x][selected.y].getName()
+		<< "[" << units[selected.x][selected.y].getX() 
+		<< "," << units[selected.x][selected.y].getY() << "]\n";
+}
+
+void Game::move(Unit u, int x, int y) {
+	u.move(x, y);
+	//grid[oldPos.x][oldPos.y][0] = *new Tile();
+	//grid[x][y][0].move(x, y);
+	hud.setText2("deselect");
+	somethingSelected = false;
 }

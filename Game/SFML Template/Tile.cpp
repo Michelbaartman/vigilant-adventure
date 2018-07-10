@@ -34,6 +34,12 @@ Tile::Tile(int id, int x, int y) : x(x), y(y) {
 		sprite.setOrigin(2, 2);
 		sprite.setPosition(x, y);
 	}
+	if (id == -2) {
+		texture.loadFromFile("sprites/Tile2.png");
+		sprite.setTexture(texture);
+		sprite.setOrigin(2, 2);
+		sprite.setPosition(x, y);
+	}
 }
 
 
@@ -62,3 +68,13 @@ void Tile::setSelect(bool b) {
 		sprite.setTexture(texture); 
 		sprite.setColor(sf::Color(255, 255, 255, 10)); }
 }
+
+void Tile::move(int posX, int posY) {
+	sprite.setPosition(posX*32, posY*32);
+	x = posX;
+	y = posY;
+
+}
+
+int Tile::getX() { return x; }
+int Tile::getY() { return y; }

@@ -1,5 +1,5 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (SFML Template.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Game.cpp
-c:\ti\game\sfml template\game.cpp(71): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\ti\game\sfml template\game.cpp(72): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-  SFML Template.vcxproj -> C:\TI\Game\Debug\MichelGame.exe
+c:\vigilant-adventure\game\sfml template\game.cpp(68): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\vigilant-adventure\game\sfml template\game.cpp(69): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  SFML Template.vcxproj -> C:\vigilant-adventure\Game\Debug\MichelGame.exe
