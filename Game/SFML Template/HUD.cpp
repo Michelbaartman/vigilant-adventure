@@ -8,14 +8,14 @@ HUD::HUD()
 
 	font.loadFromFile("sprites/arial.ttf");
 	text1.setFont(font);
-	text1.setPosition(0, 10 * 32);
-	text1.setString("empty");
+	text1.setPosition(0, 14 * 32);
+	text1.setString("");
 	text1.setCharacterSize(10);
 	text1.setFillColor(sf::Color::Black);
 
 	text2.setFont(font);
-	text2.setPosition(2 * 32, 10 * 32);
-	text2.setString("empty");
+	text2.setPosition(2 * 32, 14 * 32);
+	text2.setString("");
 	text2.setCharacterSize(10);
 	text2.setFillColor(sf::Color::Black);
 }

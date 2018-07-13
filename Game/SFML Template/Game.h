@@ -2,31 +2,28 @@
 #include "HUD.h"
 #include "Tile.h"
 #include "Indicator.h"
+#include "Grid.h"
 #include <SFML/Graphics.hpp>
 #include "Unit.h"
 #include <iostream>
 
-#define screenX 960
-#define screenY 540
-#define sprReso 32
-#define tempGridX 20
-#define tempGridY 10
-#define moveWaitTimer 25
+#include "Info.h"
 
 class Game
 {
 private:
-	Tile grid[tempGridX][tempGridY][5];
-	Unit units[tempGridX][tempGridY];
-	Tile indicator[tempGridX][tempGridY];
-
-	sf::Vector2i gridSize = sf::Vector2i(tempGridX-1, tempGridY-1);
-	HUD hud;
 	sf::RenderWindow & window;
+	HUD hud;
+	sf::Vector2i gridSize;
+	sf::View map;
+
+	Tile background[gridLimit][gridLimit];
+	Tile bgModifier[gridLimit][gridLimit];
+	Grid grid[gridLimit][gridLimit];
+	Unit units[gridLimit][gridLimit];
+	Indicator indicators[gridLimit][gridLimit];
+
 	sf::Vector2i mousePos = sf::Vector2i(0, 0);
-	int moveXCount = 0;
-	int moveYCount = 0;
-	bool mouseMode = false;
 	bool somethingSelected = false;
 	sf::Vector2i selected = sf::Vector2i(-1, -1);
 
@@ -35,14 +32,16 @@ public:
 	void events();
 	void update();
 	void draw();
-	void setupGrid(int width, int height);
+
+	void setupGrid(int gridSizeX, int gridSizeY);
 	void drawGrid();
-	void checkCol(int posX, int posY);
+
+	std::string checkTile(sf::Vector2i pos);
 	void select(sf::Vector2i mousePos);
-	void clearSel();
-	void moveUnit(sf::Vector2i mousePos);
-	void selectUnit();
-	void deselectUnit();
-	void setIndicatorRow(int begin, int end, int y);
+	void deselect();
+
+	void moveUnit(sf::Vector2i target);
+	void setIndicators(sf::Vector2i origin, int mov);
+	void setIndicators();
 };
 

@@ -1,16 +1,20 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Info.h"
 
 class Unit
 {
 private:
 	sf::Sprite sprite;
 	sf::Texture texture;
-	std::string name;
 	int x, y;
 	bool exists = false;
 	bool initialized = false;
+	bool moved = false;
+
+	sf::Vector2i pos;
+	std::string name;
 	int mov;
 
 public:
