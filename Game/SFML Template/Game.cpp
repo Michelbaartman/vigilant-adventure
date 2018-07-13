@@ -93,6 +93,7 @@ void Game::events() {
 void Game::update() {
 	// update game backend
 	checkCol(mousePos.x, mousePos.y);
+
 	hud.cursorSetPos(sf::Vector2i(mousePos.x * sprReso, mousePos.y * sprReso));
 }
 
@@ -110,12 +111,13 @@ void Game::setupGrid(int width, int height) {
 		for (int y = 0; y < height; y++) {
 			grid[x][y][1] = *new Tile(0, x * sprReso, y * sprReso);
 			grid[x][y][2] = *new Tile(-2, x * sprReso, y * sprReso);
+			indicator[x][y] = *new Tile(-3, x * sprReso, y * sprReso);
 			if (rand() % 2) grid[x][y][3] = *new Tile(-1, x * sprReso, y * sprReso);
 		}
 	}
 
-	units[3][3] = *new Unit(3, 3, "sprites/U_Brother.png", 5);
-	units[4][4] = *new Unit(4, 4, "sprites/U_Sister.png", 3);
+	units[3][3] = *new Unit(3, 3, "sprites/U_Brother.png", "Lawrence", 5);
+	units[4][4] = *new Unit(4, 4, "sprites/U_Sister.png", "Mia", 3);
 }
 
 void Game::drawGrid() {
@@ -139,14 +141,20 @@ void Game::drawGrid() {
 
 	for (int x = 0; x < tempGridX; x++) {
 		for (int y = 0; y < tempGridY; y++) {
+			indicator[x][y].draw(window); // grid indicator
+		}
+	}
+
+	for (int x = 0; x < tempGridX; x++) {
+		for (int y = 0; y < tempGridY; y++) {
 			units[x][y].draw(window); // units
 		}
 	}
 }
 
 void Game::checkCol(int posX, int posY) {
-	if (grid[posX][posY][0].getState() == false) {
-		hud.setText1("detected\n" + grid[posX][posY][0].getName());
+	if (units[posX][posY].isUnit()) {
+		hud.setText1("detected\n" + units[posX][posY].getName());
 	}
 	else {
 		hud.setText1("empty");
@@ -171,6 +179,7 @@ void Game::select(sf::Vector2i mousePos) {
 		}
 		hud.setText2("deselect");
 		somethingSelected = false;
+		deselectUnit();
 	} else {
 		selected = mousePos;
 		std::cout << mousePos.x << "|" << mousePos.y << "\n";
@@ -178,6 +187,7 @@ void Game::select(sf::Vector2i mousePos) {
 		grid[selected.x][selected.y][1].setSelect(true);
 		if (units[selected.x][selected.y].isUnit()) {
 			somethingSelected = true;
+			selectUnit();
 		}
 	}
 	std::cout << units[selected.x][selected.y].getName()
@@ -185,10 +195,56 @@ void Game::select(sf::Vector2i mousePos) {
 		<< "," << units[selected.x][selected.y].getY() << "]\n";
 }
 
-void Game::move(Unit u, int x, int y) {
-	u.move(x, y);
-	//grid[oldPos.x][oldPos.y][0] = *new Tile();
-	//grid[x][y][0].move(x, y);
-	hud.setText2("deselect");
-	somethingSelected = false;
+void Game::selectUnit() {
+	int rangeXMin = 0;
+	int rangeXMax;
+	int rangeYMin = 0;
+	int rangeYMax;
+
+	int mov = units[selected.x][selected.y].getMov(); // 5
+	sf::Vector2i origin = selected; // 4, 4
+
+	// set rangeX, check whether it hits side border or not
+	rangeXMin = origin.x - mov;
+	rangeXMax = origin.x + mov;
+	std::cout << rangeXMin << " | " << rangeXMax << "\n";
+	if (rangeXMin < 0) rangeXMin = 0;
+	else if (rangeXMax >= tempGridX) rangeXMax = tempGridX;
+
+	// set rangeY, check whether it hits upper border or not
+	rangeYMin = origin.y - mov;
+	rangeYMax = origin.y + mov;
+	if (rangeYMin < 0) rangeYMin = 0;
+	else if (rangeYMax >= tempGridY) rangeYMax = tempGridY-1;
+
+	int count = mov;
+	bool raising = true;
+
+	for (int i = 0; i < mov; i++) {
+		setIndicatorRow(rangeXMin + count, rangeXMax, origin.y + i);
+		//setIndicatorRow(rangeXMin + count, rangeXMax, origin.y - count);
+		if (count >= mov) {
+			count = 0;
+			raising = false;
+		}
+		if (raising) {
+			count++;
+		} else { 
+			count--; 
+		}
+	}
+}
+
+void Game::setIndicatorRow(int begin, int end, int y) {
+	for (int x = begin; x <= end; x++) {
+		indicator[x][y].setTrans(200);
+	}
+}
+
+void Game::deselectUnit() {
+	for (int x = 0; x < tempGridX; x++) {
+		for (int y = 0; y < tempGridY; y++) {
+			indicator[x][y].setTrans(0); // grid indicator
+		}
+	}
 }

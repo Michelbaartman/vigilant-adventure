@@ -18,6 +18,7 @@ public:
 	Unit(int x, int y, std::string path);
 	Unit(int x, int y,
 		std::string path,
+		std::string sName,
 		int sMov);
 
 	void draw(sf::RenderWindow & window);
@@ -26,6 +27,7 @@ public:
 
 	int getX() { return x; }
 	int getY() { return y; }
+	int getMov() { return mov; }
 	bool isUnit() { return exists; }
 };
 

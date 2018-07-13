@@ -5,39 +5,26 @@ Tile::Tile()
 }
 
 Tile::Tile(int id, int x, int y) : x(x), y(y) {
-	if (id == 1) {
-		unit = true; empty = false;
-		texture.loadFromFile("sprites/U_Brother.png");
-		sprite.setTexture(texture);
-		sprite.setPosition(x, y);
-		name = "BrotherUnit";
-	}
-
-	if (id == 2) {
-		unit = true; empty = false;
-		texture.loadFromFile("sprites/U_Sister.png");
-		sprite.setTexture(texture);
-		sprite.setPosition(x, y);
-		name = "SisterUnit";
-	}
-
 	if (id == 0) {
 		texture.loadFromFile("sprites/W_Grid.png");
 		texture2.loadFromFile("sprites/W_GridSel.png");
 		sprite.setTexture(texture);
-		sprite.setColor(sf::Color(255, 255, 255, 10));
+		sprite.setColor(sf::Color(255, 255, 255, 50));
 		sprite.setPosition(x, y);
-	}
-	if (id == -1) {
+	} else if (id == -1) {
 		texture.loadFromFile("sprites/Tile3.png");
 		sprite.setTexture(texture);
 		sprite.setOrigin(2, 2);
 		sprite.setPosition(x, y);
-	}
-	if (id == -2) {
+	} else if (id == -2) {
 		texture.loadFromFile("sprites/Tile2.png");
 		sprite.setTexture(texture);
 		sprite.setOrigin(2, 2);
+		sprite.setPosition(x, y);
+	} else if (id == -3) {
+		texture.loadFromFile("sprites/W_GridBlue.png");
+		sprite.setTexture(texture);
+		sprite.setColor(sf::Color(255, 255, 255, 0));
 		sprite.setPosition(x, y);
 	}
 }
@@ -66,7 +53,8 @@ void Tile::setSelect(bool b) {
 	}
 	else { 
 		sprite.setTexture(texture); 
-		sprite.setColor(sf::Color(255, 255, 255, 10)); }
+		sprite.setColor(sf::Color(255, 255, 255, 50)); 
+	}
 }
 
 void Tile::move(int posX, int posY) {
@@ -74,6 +62,10 @@ void Tile::move(int posX, int posY) {
 	x = posX;
 	y = posY;
 
+}
+
+void Tile::setTrans(int v) {
+	sprite.setColor(sf::Color(255, 255, 255, v));
 }
 
 int Tile::getX() { return x; }

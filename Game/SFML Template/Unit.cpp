@@ -11,17 +11,17 @@ Unit::Unit(int x, int y, std::string path)
 	exists = true;
 	texture.loadFromFile(path);
 	sprite.setTexture(texture);
-	name = "BrotherUnit";
+	name = "generic";
 	this->move(x, y);
 	mov = 5;
 }
 
-Unit::Unit(int x, int y, std::string path, int sMov)
+Unit::Unit(int x, int y, std::string path, std::string sName, int sMov)
 {
 	exists = true;
 	texture.loadFromFile(path);
 	sprite.setTexture(texture);
-	name = "BrotherUnit";
+	name = sName;
 	this->move(x, y);
 	mov = sMov;
 }

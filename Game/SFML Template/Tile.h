@@ -25,7 +25,7 @@ public:
 	void move(int x, int y);
 	int getX();
 	int getY();
-
+	void setTrans(int v);
 	std::string getName();
 };
 

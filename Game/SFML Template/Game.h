@@ -1,6 +1,7 @@
 #pragma once
 #include "HUD.h"
 #include "Tile.h"
+#include "Indicator.h"
 #include <SFML/Graphics.hpp>
 #include "Unit.h"
 #include <iostream>
@@ -17,6 +18,7 @@ class Game
 private:
 	Tile grid[tempGridX][tempGridY][5];
 	Unit units[tempGridX][tempGridY];
+	Tile indicator[tempGridX][tempGridY];
 
 	sf::Vector2i gridSize = sf::Vector2i(tempGridX-1, tempGridY-1);
 	HUD hud;
@@ -39,5 +41,8 @@ public:
 	void select(sf::Vector2i mousePos);
 	void clearSel();
 	void move(Unit t, int x, int y);
+	void selectUnit();
+	void deselectUnit();
+	void setIndicatorRow(int begin, int end, int y);
 };
 
