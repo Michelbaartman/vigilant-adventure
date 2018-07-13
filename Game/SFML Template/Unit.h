@@ -10,6 +10,7 @@ private:
 	std::string name;
 	int x, y;
 	bool exists = false;
+	bool initialized = false;
 	int mov;
 
 public:

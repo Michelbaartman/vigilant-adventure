@@ -23,6 +23,7 @@ Unit::Unit(int x, int y, std::string path, std::string sName, int sMov)
 	sprite.setTexture(texture);
 	name = sName;
 	this->move(x, y);
+	initialized = true;
 	mov = sMov;
 }
 

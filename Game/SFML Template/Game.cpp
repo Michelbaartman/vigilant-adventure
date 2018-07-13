@@ -31,7 +31,6 @@ void Game::events() {
 			if (mousePos.x > 0 && moveXCount >= moveWaitTimer) {
 				mousePos.x--;
 				moveXCount = 0;
-				std::cout << mousePos.x << "|" << mousePos.y << "\n";
 			}
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
@@ -40,7 +39,6 @@ void Game::events() {
 			if (mousePos.x < gridSize.x && moveXCount >= moveWaitTimer) {
 				mousePos.x++;
 				moveXCount = 0;
-				std::cout << mousePos.x << "|" << mousePos.y << "\n";
 			}
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)
@@ -49,7 +47,6 @@ void Game::events() {
 			if (mousePos.y > 0 && moveYCount >= moveWaitTimer) {
 				mousePos.y--;
 				moveYCount = 0;
-				std::cout << mousePos.x << "|" << mousePos.y << "\n";
 			}
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)
@@ -58,7 +55,6 @@ void Game::events() {
 			if (mousePos.y < gridSize.y && moveYCount >= moveWaitTimer) {
 				mousePos.y++;
 				moveYCount = 0;
-				std::cout << mousePos.x << "|" << mousePos.y << "\n";
 			}
 		}
 	}
@@ -171,73 +167,72 @@ void Game::clearSel() {
 
 void Game::select(sf::Vector2i mousePos) {
 	clearSel();
+	// does something if something is selected
 	if (somethingSelected) {
+		// checks whether your target is an unit, if not, moves current selected to spot
 		if (!units[mousePos.x][mousePos.y].isUnit()) {
-			units[mousePos.x][mousePos.y] = units[selected.x][selected.y];
-			units[mousePos.x][mousePos.y].move(mousePos.x, mousePos.y);
-			units[selected.x][selected.y] = Unit();
+			moveUnit(mousePos);
 		}
 		hud.setText2("deselect");
 		somethingSelected = false;
 		deselectUnit();
 	} else {
 		selected = mousePos;
-		std::cout << mousePos.x << "|" << mousePos.y << "\n";
 		hud.setText2(units[selected.x][selected.y].getName());
 		grid[selected.x][selected.y][1].setSelect(true);
+		// only selects something if target == unit
 		if (units[selected.x][selected.y].isUnit()) {
 			somethingSelected = true;
 			selectUnit();
 		}
 	}
-	std::cout << units[selected.x][selected.y].getName()
-		<< "[" << units[selected.x][selected.y].getX() 
-		<< "," << units[selected.x][selected.y].getY() << "]\n";
+}
+
+void Game::moveUnit(sf::Vector2i mousePos) {
+	// grabs basic variables needed for calculation
+	int unitX = units[selected.x][selected.y].getX();
+	int unitY = units[selected.x][selected.y].getY();
+	int mov = units[selected.x][selected.y].getMov();
+	int targetX = mousePos.x;
+	int targetY = mousePos.y;
+
+	// checks whether movement is allowed
+	if ((unitX - targetX) + (unitY - targetY) <= mov // upper left corner
+		&& (unitX - targetX) + (unitY - targetY)*-1 <= mov // upper right corner
+		&& (unitX - targetX) + (unitY - targetY) >= mov * -1 // lower left corner
+		&& (unitX - targetX) + (unitY - targetY)*-1 >= mov * -1 ) { // lower right corner
+
+		// moves unit
+		units[mousePos.x][mousePos.y] = units[selected.x][selected.y];
+		units[mousePos.x][mousePos.y].move(mousePos.x, mousePos.y);
+		units[selected.x][selected.y] = Unit();
+	}
 }
 
 void Game::selectUnit() {
-	int rangeXMin = 0;
-	int rangeXMax;
-	int rangeYMin = 0;
-	int rangeYMax;
-
 	int mov = units[selected.x][selected.y].getMov(); // 5
 	sf::Vector2i origin = selected; // 4, 4
 
-	// set rangeX, check whether it hits side border or not
-	rangeXMin = origin.x - mov;
-	rangeXMax = origin.x + mov;
-	std::cout << rangeXMin << " | " << rangeXMax << "\n";
-	if (rangeXMin < 0) rangeXMin = 0;
-	else if (rangeXMax >= tempGridX) rangeXMax = tempGridX;
-
-	// set rangeY, check whether it hits upper border or not
-	rangeYMin = origin.y - mov;
-	rangeYMax = origin.y + mov;
-	if (rangeYMin < 0) rangeYMin = 0;
-	else if (rangeYMax >= tempGridY) rangeYMax = tempGridY-1;
-
-	int count = mov;
-	bool raising = true;
-
-	for (int i = 0; i < mov; i++) {
-		setIndicatorRow(rangeXMin + count, rangeXMax, origin.y + i);
-		//setIndicatorRow(rangeXMin + count, rangeXMax, origin.y - count);
-		if (count >= mov) {
-			count = 0;
-			raising = false;
-		}
-		if (raising) {
-			count++;
-		} else { 
-			count--; 
-		}
+	// sets indicators on, showing movement options
+	for (int x = 0; x <= mov; x++) {
+		setIndicatorRow(origin.x - mov + x, origin.x, origin.y + x);
+		setIndicatorRow(origin.x - mov + x, origin.x, origin.y - x);
+		setIndicatorRow(origin.x, origin.x + x, origin.y + mov - x);
+		setIndicatorRow(origin.x, origin.x + x, origin.y - mov + x);
 	}
 }
 
 void Game::setIndicatorRow(int begin, int end, int y) {
+	// checks for out-of-bounds grids and limits it
+	if (end >= tempGridX) { end = tempGridX - 1; }
+	if (end < 0) { end = 0; }
+	if (y < 0) { y = 0; }
+	if (y >= tempGridY) { y = tempGridY - 1; }
+
+	/*	turns certain indicators on. may have to swap transparency changes to just having a state
+		so the game doesn't draw them */
 	for (int x = begin; x <= end; x++) {
-		indicator[x][y].setTrans(200);
+		indicator[x][y].setTrans(100);
 	}
 }
 

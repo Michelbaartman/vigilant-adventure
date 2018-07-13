@@ -40,7 +40,7 @@ public:
 	void checkCol(int posX, int posY);
 	void select(sf::Vector2i mousePos);
 	void clearSel();
-	void move(Unit t, int x, int y);
+	void moveUnit(sf::Vector2i mousePos);
 	void selectUnit();
 	void deselectUnit();
 	void setIndicatorRow(int begin, int end, int y);
